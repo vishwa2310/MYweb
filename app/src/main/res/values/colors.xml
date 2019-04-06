@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fe394a</color>
+    <color name="colorPrimaryDark">#fe394a</color>
+    <color name="colorAccent">#fe394a</color>
+
+    <color name="shadow_lighter_color">#64000000</color>
+    <color name="white">#ffffff</color>
+    <color name="colorBackground">#f4f4f4</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="line">#e7e7e7</color>
+    <color name="colortextlight">#aaaaaa</color>
+    <color name="textgreen">#00c750</color>
+    <color name="textyellow">#fcc603</color>
+    <color name="coloreline">#eaeaea</color>
+
+    <color name="contact_name">#333333</color>
+    <color name="contact_number">#8c8c8c</color>
+    <color name="color1">#FFED0D</color>
+    <color name="color2">#448aff</color>
+    <color name="color3">#40c4ff</color>
+    <color name="color4">#00e676</color>
+    <color name="color5">#fbc02d</color>
+    <color name="backgoround">#e8e6e6</color>
+
+</resources>
