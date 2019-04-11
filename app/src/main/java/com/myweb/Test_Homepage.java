@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +45,7 @@ public class Test_Homepage extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testhome);
-        getSupportActionBar().hide();
+        try{getSupportActionBar().hide();}catch (Exception e){}
          webView=findViewById(R.id.webview);
 
 
@@ -59,13 +61,14 @@ public class Test_Homepage extends AppCompatActivity {
         String url=  i.getStringExtra("url");
         System.out.println("url on web view"+url);}
 
-
         webView.getSettings().setJavaScriptEnabled(true);
         WebSettings webSettings = webView.getSettings();
+        webSettings.setAllowContentAccess(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
+
 
         if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode(0);
@@ -147,7 +150,7 @@ public class Test_Homepage extends AppCompatActivity {
             }
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 
-                webView.loadUrl("file:///android_asset/error.html");
+              //  webView.loadUrl("file:///android_asset/error.html");
             }
 
         });
@@ -162,6 +165,8 @@ public class Test_Homepage extends AppCompatActivity {
 
        // webView.loadUrl("http://adfront.in/android_view/login.php");
       //  setListeners();
+
+
     }
     private void requestPermission() {
         ActivityCompat.requestPermissions(Test_Homepage.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, resquestPermissionCode);
@@ -291,4 +296,5 @@ public class Test_Homepage extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed loading app!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }
