@@ -45,7 +45,7 @@ public class Activity_Splashscreen extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent i = new Intent(context, Test_Homepage.class);
+                    Intent i = new Intent(context, Activity_Login.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
                 }

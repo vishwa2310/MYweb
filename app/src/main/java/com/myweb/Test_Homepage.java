@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -43,24 +44,30 @@ public class Test_Homepage extends AppCompatActivity {
 
 
         webView=findViewById(R.id.webview);
-      /*  Intent i=getIntent();
+     Intent i=getIntent();
+     if (i!=null){
         String url=  i.getStringExtra("url");
-        System.out.println("url on web view"+url);*/
+        System.out.println("url on web view"+url);}
 
 
         webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setDomStorageEnabled(true);
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            /*    System.out.println("test=="+url);
-                view.loadUrl(url);*/
+            System.out.println("test=="+url);
+                view.loadUrl(url);
                 return false;
             }
         });
 
-        webView.loadUrl("http://adfront.in/android_view/login.php");
-        setListeners();
+       // webView.loadUrl("http://adfront.in/android_view/login.php");
+      //  setListeners();
     }
     private void requestPermission() {
         ActivityCompat.requestPermissions(Test_Homepage.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, resquestPermissionCode);
@@ -101,7 +108,7 @@ public class Test_Homepage extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 
-                webView.loadUrl("http://adfront.in/android_view/login.php");
+                //webView.loadUrl("http://adfront.in/android_view/login.php");
 
                 view.clearHistory();
             }
