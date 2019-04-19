@@ -10,12 +10,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -23,6 +27,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import java.io.File;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -40,11 +46,18 @@ public class Test_Homepage extends AppCompatActivity {
     private String mCM;
     private ValueCallback<Uri> mUM;
     private ValueCallback<Uri[]> mUMA;
+
     @SuppressLint({"SetJavaScriptEnabled", "WrongViewCast"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testhome);
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            //your codes here
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         try{getSupportActionBar().hide();}catch (Exception e){}
          webView=findViewById(R.id.webview);
 
@@ -68,6 +81,8 @@ public class Test_Homepage extends AppCompatActivity {
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
+        MyJavaScriptInterface myJavaScriptInterface = new MyJavaScriptInterface(Test_Homepage.this);
+        webView.addJavascriptInterface(myJavaScriptInterface, "AndroidFunction");
 
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -81,7 +96,22 @@ public class Test_Homepage extends AppCompatActivity {
         webView.setWebViewClient(new Callback());
         //webView.loadUrl("https://infeeds.com/");
         webView.loadUrl("http://adfront.in/android_view/login.php");
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent,
+                                        String contentDisposition, String mimetype,
+                                        long contentLength) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
 
+                //System.out.println("Option Upgrad System selected 11");
+
+                File loc = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                Log.i("File", loc.toString());
+                // install(loc.toString());
+            }
+        });
         webView.setWebChromeClient(new WebChromeClient() {
 
             //For Android 3.0+
@@ -166,6 +196,8 @@ public class Test_Homepage extends AppCompatActivity {
        // webView.loadUrl("http://adfront.in/android_view/login.php");
       //  setListeners();
 
+        //setListeners();
+
 
     }
     private void requestPermission() {
@@ -188,19 +220,71 @@ public class Test_Homepage extends AppCompatActivity {
         }
     }
 
+   // private ValueCallback<Uri> mUploadMessage;
+    public ValueCallback<Uri[]> uploadMessage;
+    public static final int REQUEST_SELECT_FILE = 100;
+  //  private final static int FILECHOOSER_RESULTCODE = 1;
 
 
-        @Override
+    @SuppressLint("NewApi")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (requestCode == REQUEST_SELECT_FILE) {
+                if (uploadMessage == null)
+                    return;
+                uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+                uploadMessage = null;
+            }
+        } else if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return;
+            // Use MainActivity.RESULT_OK if you're implementing WebView inside Fragment
+            // Use RESULT_OK only if you're implementing WebView inside an Activity
+            Uri result = intent == null || resultCode != Test_Homepage.RESULT_OK ? null : intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
+        } else
+            Toast.makeText(getApplicationContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();
+    }
+
+
+     /*   @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent intent) {
-        if (requestCode == FILECHOOSER_RESULTCODE) {
+     if (requestCode == FILECHOOSER_RESULTCODE) {
+         System.out.println("requestCode="+requestCode+"resultCode="+resultCode);
             if (null == mUploadMessage) return;
-            Uri result = intent == null || resultCode != RESULT_OK ? null
-                    : intent.getData();
+            Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
             mUploadMessage.onReceiveValue(result);
             mUploadMessage = null;
         }
-    }
+        *//*  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
+                System.out.println("****requestCode="+requestCode+"resultCode="+resultCode);
+                if (requestCode == FILECHOOSER_RESULTCODE)
+                {
+                    System.out.println("under activity result");
+                    if (mUploadMessage == null)
+                        return;
+                    //mUploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+                    mUploadMessage = null;
+                }
+            }
+            else if (requestCode == FILECHOOSER_RESULTCODE)
+            {
+                if (null == mUploadMessage)
+                    return;
+                // Use MainActivity.RESULT_OK if you're implementing WebView inside Fragment
+                // Use RESULT_OK only if you're implementing WebView inside an Activity
+                Uri result = intent == null || resultCode != MainActivity.RESULT_OK ? null : intent.getData();
+                mUploadMessage.onReceiveValue(result);
+                mUploadMessage = null;
+            }
+            else
+                Toast.makeText(Test_Homepage.this.getApplicationContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();*//*
+
+        }*/
     public void setListeners() {
         // TODO Auto-generated method stub
 

@@ -3,6 +3,11 @@ package com.myweb;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+
 public class Login {
     @SerializedName("status")
     @Expose
@@ -27,4 +32,5 @@ public class Login {
     public void setUrl(String url) {
         this.url = url;
     }
+
 }
